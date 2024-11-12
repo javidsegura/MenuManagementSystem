@@ -1,0 +1,5 @@
+
+
+EXTRACTION
+1. Allow for HTML access 
+2. Web scraping 
