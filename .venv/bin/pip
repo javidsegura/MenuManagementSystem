@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' "/Users/javierdominguezsegura/Programming/College/Sophomore/Databases/Final project/menu-management-system/.venv/bin/python" "$0" "$@"
+'''exec' "/Users/javierdominguezsegura/Programming/College/Sophomore/Databases/Final project/MenuManagementSystem/.venv/bin/python" "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re
