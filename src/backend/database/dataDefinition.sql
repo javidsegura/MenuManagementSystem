@@ -1,8 +1,6 @@
+CREATE DATABASE IF NOT EXISTS menu_management_system;
 
-CREATE DATABASE IF NOT EXISTS menu_manager;
-
-USE menu_manager;
-
+USE menu_management_system;
 
 -- User Table
 CREATE TABLE IF NOT EXISTS user (
