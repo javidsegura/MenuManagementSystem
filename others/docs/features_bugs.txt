@@ -2,4 +2,10 @@
 
 EXTRACTION
 1. Allow for HTML access 
-2. Web scraping 
+
+# SECURITY
+2. Dont store the password, but hash it
+3. Check pasword isalphanumeric and lenght 
+
+# DATA DEFINTION
+1. "Last edited" field in all entities 

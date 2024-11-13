@@ -19,10 +19,13 @@ ETL stands for Extract, Transform, Load.
 0. Set up database
       0.1 Create schema
       0.2 Plan index strategy
-      0.3 Set up db in cloud 
 1. Set-up django project
 2. Crate AI query 
 3. Set up queries 
+4. Set up logger
+5. Extensive documentation
+6. Presentation
+7. Create test cases and sample queries  
 
 
 
@@ -33,3 +36,7 @@ ETL stands for Extract, Transform, Load.
 3. Add full-text search
 4. Create materialized views
 5. Add menu version control
+6. Permissions in SQL
+6.5 HTML extracion
+8. Improve security, and effficency
+9. Deploy to the cloud
