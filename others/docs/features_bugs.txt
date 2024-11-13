@@ -9,3 +9,6 @@ EXTRACTION
 
 # DATA DEFINTION
 1. "Last edited" field in all entities 
+
+# FRONTEND
+1. Show each part of the db in the webpage
