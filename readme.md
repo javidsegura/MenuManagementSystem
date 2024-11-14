@@ -6,6 +6,23 @@ Menu management system for restaurant.Powered by AI.
 
 Please, create your own branch and send a pull request. Make sure you have installed all the dependecies in the requirements.txt file.
 
+1. Make sure u understand the main parts of the codebase. Have installed all the dependencies
+2. Create a file named .env withing the outermost django_project folder 
+3. Populate the .env file with the following keys:
+      # LOCAL MYSQL
+      DB_HOST="localhost"
+      DB_PASSWORD="yourpassword"
+      DB_USER="root"
+      DB_NAME="database_name"
+      DB_PORT="3306"
+
+      # OPENAI
+      OPENAI_API_KEY="your_openai_api_key"
+4. Create a superuser using the createuser.bash script
+5. Run the migrate.bash script to update the database
+7. Go to http://127.0.0.1:8000/admin/ to access the admin interface
+
+
 # ETL Pipeline
 ETL stands for Extract, Transform, Load.
 
