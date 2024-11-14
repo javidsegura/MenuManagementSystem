@@ -16,7 +16,11 @@ EXTRACTION
 # MODELS
 1. User last_login and joined should be automatized
 
+# BLOB STORAGE
+1. Images should be stored in a blob storage
 
 
 
-# TO BE DONE 
+
+# TO BE DONE: 
+1. Add data to the models from a script

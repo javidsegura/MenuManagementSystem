@@ -88,7 +88,14 @@ DATABASES = {
         'USER': os.getenv('DB_USER'),           
         'PASSWORD': os.getenv('DB_PASSWORD'),   # Make sure this set-up in the .env
         'HOST': os.getenv('DB_HOST'),       
-        'PORT': os.getenv('DB_PORT'),           # default MySQL port
+        'PORT': os.getenv('DB_PORT'),      
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+            'auth_plugin': 'caching_sha2_password',
+        }     
+        
+
     }
 }
 

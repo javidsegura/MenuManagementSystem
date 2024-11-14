@@ -25,6 +25,10 @@ from .models import (
     MenuSection
 )
 
+import base64
+from openai import OpenAI
+import os
+from menus.utils.ai_call import ai_call
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     list_display = ('id', 'username', 'email', 'first_name', 'last_name', 'is_staff') 
@@ -53,10 +57,20 @@ class MenuAdmin(admin.ModelAdmin):
     list_display = ('id', 'menu_version', 'active_status', 'available_from', 'available_until', 'pdf_link')
     list_filter = ('active_status', 'available_from', 'available_until')
     
+    def save_model(self, request, obj, form, change):
+        print(f"Saving model {obj.id}")
+        if obj.menuPdf and not change:  # Only process on new uploads
+            try:
+                ai_call(obj)
+            except Exception as e:
+                self.message_user(request, f"Error processing menu: {str(e)}", level='ERROR')
+        
+        super().save_model(request, obj, form, change)
+
     def pdf_link(self, obj):
         if obj.menuPdf:
             return format_html('<a href="{}" target="_blank">View PDF</a>', obj.menuPdf.url)
-        return '-'f"{self.restaurant.name}:{self.id}"
+        return '-'
 
     pdf_link.short_description = 'Menu PDF'
 

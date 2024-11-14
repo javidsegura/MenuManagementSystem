@@ -75,7 +75,7 @@ class MenuVersion(models.Model):
     time_upload = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.id}"
+        return f"{self.restaurant.name}:{self.id}"
 
 class Menu(models.Model):
     menu_version = models.ForeignKey(MenuVersion, on_delete=models.CASCADE)
@@ -90,7 +90,7 @@ class Menu(models.Model):
     menuPdf = models.FileField(upload_to='menu_pdfs/', null=True, blank=True)
 
     def __str__(self):
-        return f"{self.menu_version.restaurant.name}:{self.id}"
+        return f"{self.menu_version.restaurant.name}:{self.menu_version.id}"
 
 class MenuSection(models.Model):
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, null=True)
