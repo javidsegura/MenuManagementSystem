@@ -12,3 +12,11 @@ EXTRACTION
 
 # FRONTEND
 1. Show each part of the db in the webpage
+
+# MODELS
+1. User last_login and joined should be automatized
+
+
+
+
+# TO BE DONE 

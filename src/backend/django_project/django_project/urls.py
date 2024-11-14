@@ -23,8 +23,5 @@ from django.views.generic import RedirectView  # Add this import
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # Either redirect root to admin
     path('', RedirectView.as_view(url='admin/', permanent=True)),
-    # Or create a custom view for the root path
-    # path('', your_view_here),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

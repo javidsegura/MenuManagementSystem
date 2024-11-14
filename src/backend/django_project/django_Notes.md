@@ -1,6 +1,10 @@
 
-# REST API
-1. Rest API is used to write the APIs from the frontend to the backend
+# DATA FLOW
+1. User signs in. 
+2. User creates a post (logger gets triggered)
+3. User uploads pdf 
+4. Menu related tables get filled  
+
 
 # DJANGO
 1. settings.py is used for the settins of the project
@@ -16,17 +20,17 @@
       - after you make change to a certain app, you need to run python3 manage.py makemigrations and python3 manage.py migrate to update the database3
 
 # ADMIN INTERFACE 
-1. python manage.py createsuperuser
-2. python manage.py runserver
-3. go to http://127.0.0.1:8000/admin/ and login with the superuser credentials
+1. To access the admin interface activate server (see scripts folder) and go to http://127.0.0.1:8000/admin/ 
 
 # SCRIPTS
 1. createuser.bash: creates a superuser
 2. migrate.bash: makes migrations and runs the server (update and see changes)
+3. startServer.bash: runs the server
 
 # MODELS
 1. Create a class that inherits the models.Model bae class
 2. Each variable is a column with a datatype specified in models.
 3. All datatypes are here: https://docs.djangoproject.com/en/5.1/ref/models/fields/
-4. All primary keys are automatically added (integer, unique, auto_increment) (VERY IMPORTANT!)
-
+4. All primary keys are automatically added 
+5. Each model has to be specified within admin.py
+6. __str__: represents the object name in the admin interface
