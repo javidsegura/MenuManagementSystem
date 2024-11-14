@@ -17,9 +17,11 @@ EXTRACTION
 1. User last_login and joined should be automatized
 
 # BLOB STORAGE
-1. Images should be stored in a blob storage
+1. Put more informative names to the files
 
 
+# AI CALL
+1. One AI reviews the other's output
 
 
 # TO BE DONE: 

@@ -54,25 +54,37 @@ class MenuVersionAdmin(admin.ModelAdmin):
 
 @admin.register(Menu)
 class MenuAdmin(admin.ModelAdmin):
+    """
+    Modify the save_model function to call processing functions before.
+    Menu is the whole record of the model.
+        -  menu.menu_file is uploaded file. It has the following attributes:
+            - url: the link to the file in the server
+            - name: the name of the file
+            - path: the path to the file in the server
+            - size: the size of the file
+            - file: the actual file object
+    
+    """
     list_display = ('id', 'menu_version', 'active_status', 'available_from', 'available_until', 'menu_file_link')
     list_filter = ('active_status', 'available_from', 'available_until')
     
-    def save_model(self, request, obj, form, change):
-        print(f"Saving model {obj.id}")
-        """if obj.menu_file and not change:  # Only process on new uploads
+    def save_model(self, request, menu, form, change):
+        """First execute this body then save model as usual"""
+        print(f"Saving model {menu.id}")
+        if menu.menu_file and not change:  # Only process on new uploads
             try:
-                ai_call(obj)
+                ai_call(menu.menu_file)
             except Exception as e:
-                self.message_user(request, f"Error processing menu: {str(e)}", level='ERROR')"""
-        
-        super().save_model(request, obj, form, change)
+                self.message_user(request, f"Error processing menu: {str(e)}", level='ERROR')
 
-    def menu_file_link(self, obj):
-        if obj.menu_file:
-            return format_html('<a href="{}" target="_blank">View File</a>', obj.menu_file.url)
+        super().save_model(request, menu, form, change)
+
+    def menu_file_link(self, menu): # referred in list_display
+        if menu.menu_file:
+            return format_html('<a href="{}" target="_blank">View File</a>', menu.menu_file.url)
         return '-'
 
-    menu_file_link.short_description = 'Menu File'
+    menu_file_link.short_description = 'Menu File' # Change the column name in the admin interface
 
 @admin.register(MenuSection)
 class MenuSectionAdmin(admin.ModelAdmin):
@@ -87,8 +99,8 @@ class MenuItemAdmin(admin.ModelAdmin):
 
 @admin.register(DietaryRestriction)
 class DietaryRestrictionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'description')
-    search_fields = ('description',)
+    list_display = ('id', 'name')
+    search_fields = ('name',)
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):

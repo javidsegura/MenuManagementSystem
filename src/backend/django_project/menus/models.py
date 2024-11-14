@@ -89,8 +89,9 @@ class Menu(models.Model):
     state = models.CharField(max_length=3, null=True, blank=True)
     zip = models.SmallIntegerField(null=True, blank=True)
     street = models.CharField(max_length=50, null=True, blank=True)
-    menu_file = models.FileField(storage=S3Boto3Storage(),
-                                  upload_to='menu_files/', null=True, blank=True)
+    menu_file = models.FileField(
+                        null=True,
+                        blank=True) # add storage=S3Boto3Storage() if using AWS S3
 
     def __str__(self):
         return f"{self.menu_version.restaurant.name}:{self.menu_version.id}"
@@ -116,10 +117,10 @@ class MenuItem(models.Model):
 
 class DietaryRestriction(models.Model):
     menu_items = models.ManyToManyField(MenuItem, related_name='dietary_restrictions') # relanted_name specified how to access the reverse relationship
-    description = models.CharField(max_length=99, null=True, blank=True)
+    name = models.CharField(max_length=99, null=True, blank=True)
 
     def __str__(self):
-        return self.description
+        return self.name
 
 class AuditLog(models.Model):
     STATUS_CHOICES = [
