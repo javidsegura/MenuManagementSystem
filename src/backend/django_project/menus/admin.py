@@ -29,6 +29,10 @@ import base64
 from openai import OpenAI
 import os
 from menus.utils.ai_call import ai_call
+from menus.utils.process_ai import populate_menu_data
+
+
+
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     list_display = ('id', 'username', 'email', 'first_name', 'last_name', 'is_staff') 
@@ -70,14 +74,15 @@ class MenuAdmin(admin.ModelAdmin):
     
     def save_model(self, request, menu, form, change):
         """First execute this body then save model as usual"""
+        super().save_model(request, menu, form, change)
         print(f"Saving model {menu.id}")
         if menu.menu_file and not change:  # Only process on new uploads
             try:
-                ai_call(menu.menu_file)
+                menu_json = ai_call(menu.menu_file)
+                populate_menu_data(menu, menu_json)
             except Exception as e:
                 self.message_user(request, f"Error processing menu: {str(e)}", level='ERROR')
 
-        super().save_model(request, menu, form, change)
 
     def menu_file_link(self, menu): # referred in list_display
         if menu.menu_file:
@@ -95,7 +100,7 @@ class MenuSectionAdmin(admin.ModelAdmin):
 class MenuItemAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'menu_section', 'price', 'currency', 'available')
     list_filter = ('available', 'currency', 'menu_section')
-    search_fields = ('name', 'description')
+    search_fields = ('name', 'description', 'menu_section')
 
 @admin.register(DietaryRestriction)
 class DietaryRestrictionAdmin(admin.ModelAdmin):

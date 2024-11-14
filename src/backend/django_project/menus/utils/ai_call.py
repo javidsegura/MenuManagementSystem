@@ -2,6 +2,7 @@ import base64
 import os
 from openai import OpenAI
 from menus.utils.process_ai import populate_menu_data
+import json
 
 # TO DO: get a dict with all the info. Then write it to the db
 
@@ -39,6 +40,12 @@ def ai_call(menu_file):
                                         ]
                                     }
                                 ]
+                                "restaurant_info":{
+                                    "resturant_name": "restaurant name", #may be extracted from the webiste url
+                                    "address": "restaurant address",
+                                    "phone": "restaurant phone",
+                                    "website": "restaurant website"
+                                }
                             }"""
                         },
                         {
@@ -57,9 +64,17 @@ def ai_call(menu_file):
             max_tokens=4096
         )
 
-        print(f"OpenAI Response: {response.choices[0].message.content}")
-        return response.choices[0].message.content
-                
+        content = response.choices[0].message.content.replace('```json', '').replace('```', '').strip()
+
+        print(f"Content: {content}")
+    
+        # Extract just the JSON part
+        json_str = content[content.find('{'):content.rfind('}')+1] # get just ext
+        json_response = json.loads(json_str)
+        print(f"JSON Response: {json_response}")
+
+        return json_response
+    
     except Exception as e:
         print(f"Error in ai_call: {str(e)}")
         raise
