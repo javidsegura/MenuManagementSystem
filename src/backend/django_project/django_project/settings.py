@@ -12,9 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-#from dotenv import load_dotenv
+from dotenv import load_dotenv
 
-#load_dotenv()
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'menus'
 ]
 
 MIDDLEWARE = [
@@ -83,11 +84,11 @@ WSGI_APPLICATION = 'django_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'menu_management_system',  # your database name
+        'NAME': os.getenv('DB_NAME'),  # your database name
         'USER': os.getenv('DB_USER'),           
         'PASSWORD': os.getenv('DB_PASSWORD'),   # Make sure this set-up in the .env
-        'HOST': 'localhost',       
-        'PORT': '3306',           # default MySQL port
+        'HOST': os.getenv('DB_HOST'),       
+        'PORT': os.getenv('DB_PORT'),           # default MySQL port
     }
 }
 
@@ -134,3 +135,8 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS = True
+AUTH_USER_MODEL = 'menus.User'
+
+# Add these settings for media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
