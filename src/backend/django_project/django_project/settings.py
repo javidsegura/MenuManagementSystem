@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'menus'
+    'menus',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -95,9 +96,21 @@ DATABASES = {
             'auth_plugin': 'caching_sha2_password',
         }     
         
-
     }
 }
+
+# AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+# AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+# AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
+# AWS_S3_CUSTOM_DOMAIN = os.getenv('AWS_S3_CUSTOM_DOMAIN')
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# AWS_S3_FILE_OVERWRITE = True  # Don't overwrite files with the same name
+# AWS_DEFAULT_ACL = None  # Use bucket's default ACL
+# AWS_S3_VERIFY = True
+# AWS_QUERYSTRING_AUTH = False  
+
+# print(f"AWS Settings loaded: Bucket={AWS_STORAGE_BUCKET_NAME}, Region={AWS_S3_REGION_NAME}")
 
 
 # Password validation

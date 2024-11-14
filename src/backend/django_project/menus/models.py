@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from storages.backends.s3boto3 import S3Boto3Storage
+
 
 # Create your models here. 
 # All the databases entities will be here
@@ -87,7 +89,8 @@ class Menu(models.Model):
     state = models.CharField(max_length=3, null=True, blank=True)
     zip = models.SmallIntegerField(null=True, blank=True)
     street = models.CharField(max_length=50, null=True, blank=True)
-    menuPdf = models.FileField(upload_to='menu_pdfs/', null=True, blank=True)
+    menu_file = models.FileField(storage=S3Boto3Storage(),
+                                  upload_to='menu_files/', null=True, blank=True)
 
     def __str__(self):
         return f"{self.menu_version.restaurant.name}:{self.menu_version.id}"

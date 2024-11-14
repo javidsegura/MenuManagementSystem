@@ -54,25 +54,25 @@ class MenuVersionAdmin(admin.ModelAdmin):
 
 @admin.register(Menu)
 class MenuAdmin(admin.ModelAdmin):
-    list_display = ('id', 'menu_version', 'active_status', 'available_from', 'available_until', 'pdf_link')
+    list_display = ('id', 'menu_version', 'active_status', 'available_from', 'available_until', 'menu_file_link')
     list_filter = ('active_status', 'available_from', 'available_until')
     
     def save_model(self, request, obj, form, change):
         print(f"Saving model {obj.id}")
-        if obj.menuPdf and not change:  # Only process on new uploads
+        """if obj.menu_file and not change:  # Only process on new uploads
             try:
                 ai_call(obj)
             except Exception as e:
-                self.message_user(request, f"Error processing menu: {str(e)}", level='ERROR')
+                self.message_user(request, f"Error processing menu: {str(e)}", level='ERROR')"""
         
         super().save_model(request, obj, form, change)
 
-    def pdf_link(self, obj):
-        if obj.menuPdf:
-            return format_html('<a href="{}" target="_blank">View PDF</a>', obj.menuPdf.url)
+    def menu_file_link(self, obj):
+        if obj.menu_file:
+            return format_html('<a href="{}" target="_blank">View File</a>', obj.menu_file.url)
         return '-'
 
-    pdf_link.short_description = 'Menu PDF'
+    menu_file_link.short_description = 'Menu File'
 
 @admin.register(MenuSection)
 class MenuSectionAdmin(admin.ModelAdmin):
