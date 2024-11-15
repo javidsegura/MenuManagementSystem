@@ -62,32 +62,38 @@ class MenuAdmin(admin.ModelAdmin):
                     'active_status', 'available_from', 'available_until',
                     'timeUpload', 'menu_file_link')
     list_filter = ('active_status', 'available_from', 'available_until')
-    readonly_fields = ('user_id', 'version') # restaurante will be readonly, with default temp
+    readonly_fields = ('user_id', 'version', "restaurant") # restaurante will be readonly, with default temp
+
     
     def save_model(self, request, menu, form, change):
         """First execute this body then save model as usual"""
-        # # Log the event
+        # Log the event
+    
+        super().save_model(request, menu, form, change) # maybe this can be edeleted with super.savaemodelr
         # uploaded_log = AuditLog.objects.create(
         #     menu_version=menu.version,
         #     phase="Uploaded file",
         #     status="Received"
         # )
-        super().save_model(request, menu, form, change)
-        if not change: #only for new menus
-            
-            menu.user_id = request.user
-            menu_version = MenuVersion.objects.create(restaurant=menu.restaurant)
-            menu.version = menu_version
-            menu.save()
-
-        # uploaded_log.status = "Processed"
-        # uploaded_log.save()
 
         print(f"Saving model {menu.id}")
         if menu.menu_file and not change:  # Only process on new uploads
+            menu.user_id = request.user
+            # uploaded_log.status = "Processed"
+            # uploaded_log.save()
             try:
                 menu_json = ai_call(menu)
+                print("I am about to populate_menu_data")
                 populate_menu_data(menu, menu_json)
+                print("About to create MenuVersion FK!!!")
+                if menu.restaurant.name:
+                    print(f"Menu restaurant: {menu.restaurant}")
+
+                    menu_version = MenuVersion.objects.create(restaurant=menu.restaurant)
+                    menu.version = menu_version
+                    menu.save()
+                else:
+                    raise ValueError("Restaurant must be set before creating MenuVersion")
             except Exception as e:
                 self.message_user(request, f"Error processing menu: {str(e)}", level='ERROR')
 

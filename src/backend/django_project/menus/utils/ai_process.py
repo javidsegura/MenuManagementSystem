@@ -17,12 +17,12 @@ def populate_menu_data(menu: Menu, menu_data: dict):
         # Populate the restaurant info that was left empty from the restaurant info in the menu version
         restaurant_info = menu_data.get('restaurant_info', {})
         if restaurant_info:
-            restaurant = menu.restaurant
-            restaurant.name = restaurant_info.get('restaurant_name', restaurant.name)
-            restaurant.phone = restaurant_info.get('phone', restaurant.phone)
-            restaurant.street = restaurant_info.get('address', restaurant.street)
-            restaurant.website = restaurant_info.get("website", restaurant.website)
-            restaurant.save() # Write to the database 
+            print(f"{menu.restaurant}")
+            menu.restaurant.name = restaurant_info.get('restaurant_name', menu.restaurant.name)
+            menu.restaurant.phone = restaurant_info.get('phone', menu.restaurant.phone)
+            menu.restaurant.street = restaurant_info.get('address', menu.restaurant.street)
+            menu.restaurant.website = restaurant_info.get("website", menu.restaurant.website)
+            menu.restaurant.save() # Write to the database 
         
         # Create menu sections and populate them with items 
         for section_data in menu_data.get('menu_sections', []):
