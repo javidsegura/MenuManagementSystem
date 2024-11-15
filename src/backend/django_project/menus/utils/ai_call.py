@@ -2,12 +2,19 @@ import base64
 import os
 from openai import OpenAI
 import json
+from menus.models import AuditLog, Menu
 
 # TO DO: get a dict with all the info. Then write it to the db
 
-def ai_call(menu_file):
+def ai_call(menu):
     """ Send the menu file to OpenAI to process """
     print(f"AI call for uploaded file")
+    menu_file = menu.menu_file
+    # ai_call_log = AuditLog.objects.create(
+    #     menu_version=menu.version,
+    #     phase="Extracting data",
+    #     status="Processing"
+    # )
     try:
         # OpenAI API call
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -72,9 +79,15 @@ def ai_call(menu_file):
         json_response = json.loads(json_str)
         print(f"JSON Response: {json_response}")
 
+        # ai_call_log.status = "Extracted"
+        # ai_call_log.save()
+
         return json_response
     
     except Exception as e:
         print(f"Error in ai_call: {str(e)}")
+        # ai_call_log.status = "Failed"
+        # ai_call_log.other = str(e)
+        # ai_call_log.save()
         raise
                 

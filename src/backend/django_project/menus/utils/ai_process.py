@@ -4,15 +4,20 @@ After pdf info has been extracted, write it to the database.
 """
 
 import json
-from menus.models import Menu, MenuItem, MenuSection, DietaryRestriction
+from menus.models import Menu, MenuItem, MenuSection, DietaryRestriction, AuditLog
 
 def populate_menu_data(menu: Menu, menu_data: dict):
     print(f"Populating menu data for {menu}")
+    # ai_process_log = AuditLog.objects.create(
+    #     menu_version=menu.version,
+    #     phase="Populating data",
+    #     status="Processing"
+    # )
     try:
         # Populate the restaurant info that was left empty from the restaurant info in the menu version
         restaurant_info = menu_data.get('restaurant_info', {})
         if restaurant_info:
-            restaurant = menu.menu_version.restaurant
+            restaurant = menu.restaurant
             restaurant.name = restaurant_info.get('restaurant_name', restaurant.name)
             restaurant.phone = restaurant_info.get('phone', restaurant.phone)
             restaurant.street = restaurant_info.get('address', restaurant.street)
@@ -43,7 +48,13 @@ def populate_menu_data(menu: Menu, menu_data: dict):
                             name=restriction
                         )
                         menu_item.dietary_restrictions.add(restriction_obj)
+            
+        # ai_process_log.status = "Processed"
+        # ai_process_log.save()
                 
     except Exception as e:
         print(f"Error in populate_menu_data: {str(e)}")
+        # ai_process_log.status = "Failed"
+        # ai_process_log.other = str(e)
+        # ai_process_log.save()
         raise ValueError(f"Error processing menu data: {str(e)}")

@@ -51,3 +51,19 @@
 4. Create a superuser using the createuser.bash script
 5. Run the migrate.bash script to update the database
 7. Go to http://127.0.0.1:8000/admin/ to access the admin interface
+
+
+QUESTIONS:
+1. Can a a different user create a new version of the same restaurant?
+
+Do any checkings (data integrity) with: constraints = [
+            models.CheckConstraint(
+                check=models.Q(age__gte=18),
+                name='age_gte_18'
+            )
+        ]
+2. Menu version must be unique
+3. Is it okay if we reduce the scope of the logger to the ETL phase?
+
+TO DO:
+1. Sections should be M:M with menu

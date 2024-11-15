@@ -14,21 +14,20 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html  
 from .models import (
     User,
-    MenuVersion,
     Restaurant,
-    OpeningHours,
     Menu,
     MenuItem,
     DietaryRestriction,
     AuditLog,
-    MenuSection
+    MenuSection, 
+    MenuVersion
 )
 
 import base64
 from openai import OpenAI
 import os
 from menus.utils.ai_call import ai_call
-from menus.utils.process_ai import populate_menu_data
+from menus.utils.ai_process import populate_menu_data
 
 
 
@@ -42,18 +41,9 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'city', 'state', 'phone', 'email')
+    list_display = ('id', 'name', 'city', 'state', 'phone', 'email', 
+                    'website', 'country', 'zip', 'street')
     search_fields = ('name', 'city')
-
-@admin.register(OpeningHours)
-class OpeningHoursAdmin(admin.ModelAdmin):
-    list_display = ('id', 'day_of_week', 'open_time', 'close_time')
-    list_filter = ('day_of_week',)
-
-@admin.register(MenuVersion)
-class MenuVersionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'restaurant', 'time_upload')
-    list_filter = ('time_upload', 'restaurant')
 
 @admin.register(Menu)
 class MenuAdmin(admin.ModelAdmin):
@@ -68,19 +58,38 @@ class MenuAdmin(admin.ModelAdmin):
             - file: the actual file object
     
     """
-    list_display = ('id', 'menu_version', 'active_status', 'available_from', 'available_until', 'menu_file_link')
+    list_display = ('id', 'restaurant', 'user_id', 'version', 
+                    'active_status', 'available_from', 'available_until',
+                    'timeUpload', 'menu_file_link')
     list_filter = ('active_status', 'available_from', 'available_until')
+    readonly_fields = ('user_id', 'version') # restaurante will be readonly, with default temp
     
     def save_model(self, request, menu, form, change):
         """First execute this body then save model as usual"""
+        # # Log the event
+        # uploaded_log = AuditLog.objects.create(
+        #     menu_version=menu.version,
+        #     phase="Uploaded file",
+        #     status="Received"
+        # )
         super().save_model(request, menu, form, change)
+        if not change: #only for new menus
+            if menu.restaurant and not menu.version:
+                menu.user_id = request.user
+                menu_version = MenuVersion.objects.create(restaurant=menu.restaurant)
+                menu.version = menu_version
+                menu.save()
+
+        # uploaded_log.status = "Processed"
+        # uploaded_log.save()
+
         print(f"Saving model {menu.id}")
-        if menu.menu_file and not change:  # Only process on new uploads
-            try:
-                menu_json = ai_call(menu.menu_file)
-                populate_menu_data(menu, menu_json)
-            except Exception as e:
-                self.message_user(request, f"Error processing menu: {str(e)}", level='ERROR')
+        # if menu.menu_file and not change:  # Only process on new uploads
+        #     try:
+        #         menu_json = ai_call(menu)
+        #         populate_menu_data(menu, menu_json)
+        #     except Exception as e:
+        #         self.message_user(request, f"Error processing menu: {str(e)}", level='ERROR')
 
 
     def menu_file_link(self, menu): # referred in list_display
@@ -106,9 +115,13 @@ class DietaryRestrictionAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
     search_fields = ('name',)
 
-@admin.register(AuditLog)
-class AuditLogAdmin(admin.ModelAdmin):
-    list_display = ('id', 'menu', 'status', 'action', 'entity_affected')
-    list_filter = ('status',)
-    #readonly_fields = ('menu', 'status', 'action', 'entity_affected', 'old_value', 'new_value')
+@admin.register(MenuVersion)
+class MenuVersionAdmin(admin.ModelAdmin):
+    list_display = ("id", "composite_id")
+
+# @admin.register(AuditLog)
+# class AuditLogAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'menu', 'status', 'phase', 'other', 'time_registered')
+#     list_filter = ('status',)
+#     #readonly_fields = ('menu', 'status', 'action', 'entity_affected', 'old_value', 'new_value')
 
