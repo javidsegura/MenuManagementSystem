@@ -58,9 +58,9 @@ class MenuAdmin(admin.ModelAdmin):
             - file: the actual file object
     
     """
-    list_display = ('id', 'restaurant', 'user_id', 'version', 
+    list_display = ('id', 'restaurant', 'user_id', 'version', 'menu_file_link',
                     'active_status', 'available_from', 'available_until',
-                    'timeUpload', 'menu_file_link')
+                    'timeUpload')
     list_filter = ('active_status', 'available_from', 'available_until')
     readonly_fields = ('user_id', 'version', "restaurant") # restaurante will be readonly, with default temp
 
@@ -76,7 +76,10 @@ class MenuAdmin(admin.ModelAdmin):
         #     status="Received"
         # )
 
+        menu.restaurant = Restaurant.objects.create(name="null")
+
         print(f"Saving model {menu.id}")
+        print(f"Menu restaurant name: {menu.restaurant.name}")
         if menu.menu_file and not change:  # Only process on new uploads
             menu.user_id = request.user
             # uploaded_log.status = "Processed"

@@ -4,9 +4,9 @@ After pdf info has been extracted, write it to the database.
 """
 
 import json
-from menus.models import Menu, MenuItem, MenuSection, DietaryRestriction, AuditLog
+from menus.models import MenuItem, MenuSection, DietaryRestriction, AuditLog
 
-def populate_menu_data(menu: Menu, menu_data: dict):
+def populate_menu_data(menu, menu_data: dict):
     print(f"Populating menu data for {menu}")
     # ai_process_log = AuditLog.objects.create(
     #     menu_version=menu.version,
