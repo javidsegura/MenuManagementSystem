@@ -14,7 +14,6 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html  
 from .models import (
     User,
-    Post,
     MenuVersion,
     Restaurant,
     OpeningHours,
@@ -106,11 +105,6 @@ class MenuItemAdmin(admin.ModelAdmin):
 class DietaryRestrictionAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
     search_fields = ('name',)
-
-@admin.register(Post)
-class PostAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'upload_time')
-    list_filter = ('upload_time',)
 
 @admin.register(AuditLog)
 class AuditLogAdmin(admin.ModelAdmin):

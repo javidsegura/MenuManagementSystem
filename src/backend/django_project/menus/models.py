@@ -32,13 +32,6 @@ class User(AbstractUser):
         """ represnts the object namein the admin interface """
         return self.username
 
-class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    upload_time = models.DateTimeField(auto_now_add=True, null=True) # auto_now_add is a default value for current time
-
-    def __str__(self):
-        return f"{self.id}:{self.user.username}"
-
 class Restaurant(models.Model):
     opening_hours = models.ManyToManyField('OpeningHours', related_name='restaurants')
     name = models.CharField(max_length=50, null=True, blank=True)
@@ -72,7 +65,6 @@ class OpeningHours(models.Model):
     
 class MenuVersion(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     time_upload = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 

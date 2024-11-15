@@ -1,7 +1,6 @@
 import base64
 import os
 from openai import OpenAI
-from menus.utils.process_ai import populate_menu_data
 import json
 
 # TO DO: get a dict with all the info. Then write it to the db
