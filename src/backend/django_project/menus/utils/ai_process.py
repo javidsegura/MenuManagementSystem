@@ -21,6 +21,7 @@ def populate_menu_data(menu: Menu, menu_data: dict):
             restaurant.name = restaurant_info.get('restaurant_name', restaurant.name)
             restaurant.phone = restaurant_info.get('phone', restaurant.phone)
             restaurant.street = restaurant_info.get('address', restaurant.street)
+            restaurant.website = restaurant_info.get("website", restaurant.website)
             restaurant.save() # Write to the database 
         
         # Create menu sections and populate them with items 

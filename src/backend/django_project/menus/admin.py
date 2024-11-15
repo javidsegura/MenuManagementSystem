@@ -74,22 +74,22 @@ class MenuAdmin(admin.ModelAdmin):
         # )
         super().save_model(request, menu, form, change)
         if not change: #only for new menus
-            if menu.restaurant and not menu.version:
-                menu.user_id = request.user
-                menu_version = MenuVersion.objects.create(restaurant=menu.restaurant)
-                menu.version = menu_version
-                menu.save()
+            
+            menu.user_id = request.user
+            menu_version = MenuVersion.objects.create(restaurant=menu.restaurant)
+            menu.version = menu_version
+            menu.save()
 
         # uploaded_log.status = "Processed"
         # uploaded_log.save()
 
         print(f"Saving model {menu.id}")
-        # if menu.menu_file and not change:  # Only process on new uploads
-        #     try:
-        #         menu_json = ai_call(menu)
-        #         populate_menu_data(menu, menu_json)
-        #     except Exception as e:
-        #         self.message_user(request, f"Error processing menu: {str(e)}", level='ERROR')
+        if menu.menu_file and not change:  # Only process on new uploads
+            try:
+                menu_json = ai_call(menu)
+                populate_menu_data(menu, menu_json)
+            except Exception as e:
+                self.message_user(request, f"Error processing menu: {str(e)}", level='ERROR')
 
 
     def menu_file_link(self, menu): # referred in list_display

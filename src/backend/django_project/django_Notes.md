@@ -67,3 +67,4 @@ Do any checkings (data integrity) with: constraints = [
 
 TO DO:
 1. Sections should be M:M with menu
+2. Dont allow clearing of file

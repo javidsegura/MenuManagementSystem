@@ -74,7 +74,7 @@ class MenuVersion(models.Model):
         verbose_name = verbose_name_plural = "Menu Versions"
 
 class Menu(models.Model):
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True, blank=True)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True, blank=True, default="temp")
     version = models.ForeignKey(MenuVersion, on_delete=models.CASCADE, null=True, blank=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True) # should be readonly and given from the current logged in user automatically
     active_status = models.BooleanField(default=True, null=True, blank=True)
