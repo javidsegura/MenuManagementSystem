@@ -26,8 +26,8 @@ from .models import (
 import base64
 from openai import OpenAI
 import os
-from menus.utils.ai_call import ai_call
-from menus.utils.ai_process import populate_menu_data
+from menus.utils.extraction import ai_call
+from menus.utils.insertion import populate_menu_data
 
 
 
