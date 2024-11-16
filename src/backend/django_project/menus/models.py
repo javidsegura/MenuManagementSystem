@@ -52,19 +52,23 @@ class Restaurant(models.Model):
         verbose_name_plural = "Restaurants"
 
 class MenuVersion(models.Model):
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True, blank=True)  # Reference restaurant directly
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, null=True, blank=True)
     version_number = models.IntegerField(editable=False)
     composite_id = models.CharField(max_length=255, unique=True, editable=False)
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            # Get the latest version number for this restaurant
+        if not self.pk:  # Only for new instances
+            # Get the latest version number for this specific restaurant
             latest_version = MenuVersion.objects.filter(
                 restaurant=self.restaurant
             ).order_by('-version_number').first()
+            
+            # Set the new version number
             self.version_number = (latest_version.version_number + 1) if latest_version else 1
+            
+            # Create a more unique composite_id using restaurant ID
+            self.composite_id = f"{self.restaurant.id}:{self.restaurant.name}-v{self.version_number}"
         
-        self.composite_id = f"{self.restaurant.name}-v{self.version_number}"
         super().save(*args, **kwargs)
     
     def __str__(self):

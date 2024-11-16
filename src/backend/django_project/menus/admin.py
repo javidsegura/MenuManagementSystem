@@ -23,9 +23,6 @@ from .models import (
     MenuVersion
 )
 
-import base64
-from openai import OpenAI
-import os
 from menus.utils.extraction import ai_call
 from menus.utils.insertion import populate_menu_data
 
@@ -76,10 +73,7 @@ class MenuAdmin(admin.ModelAdmin):
         #     status="Received"
         # )
 
-        menu.restaurant = Restaurant.objects.create(name="null")
 
-        print(f"Saving model {menu.id}")
-        print(f"Menu restaurant name: {menu.restaurant.name}")
         if menu.menu_file and not change:  # Only process on new uploads
             menu.user_id = request.user
             # uploaded_log.status = "Processed"
@@ -93,6 +87,7 @@ class MenuAdmin(admin.ModelAdmin):
                     print(f"Menu restaurant: {menu.restaurant}")
 
                     menu_version = MenuVersion.objects.create(restaurant=menu.restaurant)
+                    print(f"Menu version: {menu_version.composite_id}")
                     menu.version = menu_version
                     menu.save()
                 else:
