@@ -1,3 +1,6 @@
+-- See documentation of indexes here: 
+-- https://docs.google.com/spreadsheets/d/1uw-jabrRVzGIta0XbzHYRbZJI8LuYw87DzQga-fYs1c/edit?usp=sharing
+
 CREATE DATABASE IF NOT EXISTS menu_management_system;
 
 USE menu_management_system;
@@ -17,83 +20,52 @@ CREATE TABLE IF NOT EXISTS user (
     street VARCHAR(50) NOT NULL,
     joinedDate TIMESTAMP NOT NULL,
     permissions ENUM('admin', 'user') NOT NULL,
-    INDEX (email) -- Index for frequent email lookups
-);
-
--- Posts Table
-CREATE TABLE IF NOT EXISTS posts (
-    post_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    uploadTime TIMESTAMP NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(user_id),
-    INDEX (user_id) -- Index to speed up joins with user
-);
-
--- Menu Version Table
-CREATE TABLE IF NOT EXISTS menu_version (
-    menu_version INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    post_id INT,
-    timeUpload TIMESTAMP NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(user_id),
-    FOREIGN KEY (post_id) REFERENCES posts(post_id),
-    INDEX (user_id), -- Index to speed up joins
-    INDEX (post_id)  -- Index to optimize joins with posts
-);
-
--- Restaurant Table
-CREATE TABLE IF NOT EXISTS restaurant (
-    restaurant_id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(50) NOT NULL,
-    phone VARCHAR(50) NOT NULL,
-    email VARCHAR(50) NOT NULL,
-    country VARCHAR(50) NOT NULL,
-    city VARCHAR(50) NOT NULL,
-    state VARCHAR(3) NOT NULL,
-    zip SMALLINT NOT NULL,
-    street VARCHAR(50) NOT NULL,
-    INDEX (name) -- Index for restaurant name search
-);
-
--- Opening Hours Table
-CREATE TABLE IF NOT EXISTS opening_hours (
-    opening_hours_id INT PRIMARY KEY AUTO_INCREMENT,
-    day_of_week ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday') NOT NULL,
-    open_time TIME NOT NULL,
-    close_time TIME NOT NULL
-);
-
--- Opening Hours Bridge Table
-CREATE TABLE IF NOT EXISTS opening_hours_bridge (
-    restaurant_id INT NOT NULL,
-    opening_hours_id INT NOT NULL,
-    PRIMARY KEY (restaurant_id, opening_hours_id),
-    FOREIGN KEY (restaurant_id) REFERENCES restaurant(restaurant_id),
-    FOREIGN KEY (opening_hours_id) REFERENCES opening_hours(opening_hours_id)
+    INDEX (email), -- Index for frequent email lookups
+    INDEX user_id_name_email (user_id, userName, email), -- Composite Index
+    INDEX user_location (country, city, state, zip, street) -- Composite Index
 );
 
 -- Menu Info Table
-CREATE TABLE IF NOT EXISTS menu_info (
+CREATE TABLE IF NOT EXISTS menu (
     menu_id INT PRIMARY KEY AUTO_INCREMENT,
-    menu_section INT NOT NULL,
-    section VARCHAR(50),
+    restaurant_id INT NOT NULL,
+    section VARCHAR(50) NOT NULL,
     activeStatus BOOLEAN DEFAULT TRUE,
     available_until DATE,
     available_from DATE,
-    country VARCHAR(50) NOT NULL,
-    city VARCHAR(50) NOT NULL,
-    state VARCHAR(3) NOT NULL,
-    zip SMALLINT NOT NULL,
-    street VARCHAR(50) NOT NULL,
-    FOREIGN KEY (menu_section) REFERENCES menu_section(section_id)
+    timeUpload TIMESTAMP,
+    menu_version INT NOT NULL,
+    user_id INT NOT NULL,
+    menu_file BLOB NOT NULL,
+    FOREIGN KEY (restaurant_id) REFERENCES restaurant(restaurant_id),
+    FOREIGN KEY (menu_version) REFERENCES menu_version(counter),
+    FOREIGN KEY (user_id) REFERENCES user(user_id),
+    INDEX availability (available_from, available_until) -- Composite Index
 );
 
 -- Menu Section Table
 CREATE TABLE IF NOT EXISTS menu_section (
     section_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(99) NOT NULL
+);
+
+-- Menu Sections Bridge
+CREATE TABLE IF NOT EXISTS menu_sections_menus (
     menu_id INT NOT NULL,
-    FOREIGN KEY (menu_id) REFERENCES menu_info(menu_id),
-    INDEX (menu_id) -- Index to speed up joins with menu_info
+    section_id INT NOT NULL,
+    PRIMARY KEY (menu_id, section_id), -- Composite primary key
+    FOREIGN KEY (menu_id) REFERENCES menu(menu_id),
+    FOREIGN KEY (section_id) REFERENCES menu_section(section_id),
+    INDEX (menu_id), -- Index for frequent menu lookups
+    INDEX (section_id) -- Index for frequent section lookups
+);
+
+-- Menu Version Table
+CREATE TABLE IF NOT EXISTS menu_version (
+    restaurant_id INT NOT NULL,
+    counter INT NOT NULL AUTO_INCREMENT,
+    PRIMARY KEY (restaurant_id, counter), -- Composite primary key that enforces uniqueness
+    FOREIGN KEY (restaurant_id) REFERENCES restaurant(restaurant_id)
 );
 
 -- Menu Item Table
@@ -113,7 +85,7 @@ CREATE TABLE IF NOT EXISTS menu_item (
 -- Dietary Restrictions Table
 CREATE TABLE IF NOT EXISTS dietary_restrictions (
     dietary_restrict_id INT PRIMARY KEY AUTO_INCREMENT,
-    description VARCHAR(99) NOT NULL
+    name VARCHAR(99) NOT NULL
 );
 
 -- Item Dietary Restrictions Bridge Table
@@ -127,15 +99,30 @@ CREATE TABLE IF NOT EXISTS item_dietary_restrictions (
     INDEX (dietary_restrict_id) -- Index for joins
 );
 
+-- Restaurant Table
+CREATE TABLE IF NOT EXISTS restaurant (
+    restaurant_id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50) NOT NULL,
+    phone VARCHAR(50),
+    email VARCHAR(50),
+    country VARCHAR(50),
+    city VARCHAR(50),
+    state VARCHAR(3),
+    zip SMALLINT,
+    street VARCHAR(50),
+    website VARCHAR(99),
+    INDEX (name), -- Index for restaurant name search
+    INDEX restaurant_location (country, city, state, zip, street), -- Composite Index for location
+    INDEX contact_info (name, phone, email, website) -- Composite Index for contact details
+);
+
 -- Audit Log Table
 CREATE TABLE IF NOT EXISTS audit_log (
     log_id INT PRIMARY KEY AUTO_INCREMENT,
     menu_id INT NOT NULL,
     status ENUM('received', 'processed', 'uploaded') NOT NULL,
-    action VARCHAR(99) NOT NULL,
-    entity_affected VARCHAR(99) NOT NULL,
-    old_value VARCHAR(99),
-    new_value VARCHAR(99),
-    FOREIGN KEY (menu_id) REFERENCES menu_info(menu_id),
-    INDEX (menu_id) -- Index to speed up joins with menu_info
+    time_registered TIMESTAMP NOT NULL,
+    other VARCHAR(99),
+    FOREIGN KEY (menu_id) REFERENCES menu(menu_id),
+    INDEX (menu_id) -- Index to speed up joins with menu
 );
